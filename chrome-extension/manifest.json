@@ -1,0 +1,24 @@
+{
+ "background": { "service_worker": "background.js" },
+ "action": {
+   "default_icon": "icon-128.png",
+   "default_title": "Job App"
+ },
+ "name": "Job App",
+ "description": "Custom app to log job applications",
+ "homepage_url": "https://github.com/aacosta1985",
+ "icons": {
+     "16": "icon-16.png",
+     "48": "icon-48.png",
+     "128": "icon-128.png" },
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "permissions": [
+    "scripting",
+    "tabs",
+    "storage"
+  ],
+ "version": "4.5",
+ "manifest_version": 3
+}
