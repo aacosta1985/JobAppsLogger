@@ -134,3 +134,7 @@ Deploy it as a Web App and use the `/exec` deployment URL in `chrome-extension/c
 - alerts are shown only for errors, duplicate detection, or user prompts
 - Chrome local storage keeps a seen-URL cache
 - Apps Script remains the source of truth for duplicate checks
+
+
+## Example Dashboard
+<img width="1117" height="513" alt="image" src="https://github.com/user-attachments/assets/6011a87e-d464-4e70-8a95-289dbadad887" />
