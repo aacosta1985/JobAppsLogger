@@ -36,6 +36,7 @@
 
   // Guess title/company (best-effort v1)
   const domGuess = guessFromDom_(host);
+  const genericDetails = extractGenericDetails_();
   const remoteDetails = host.includes("remote.co") ? extractRemoteDetails_() : {};
   const indeedDetails = host.includes("indeed.com") ? extractIndeedDetails_() : {};
   const jobTitleGuess = indeedDetails.jobTitle || domGuess.jobTitle || guessJobTitle_(title);
@@ -87,10 +88,14 @@
     jobTitle: jobTitle.trim(),
     company: company.trim(),
     link: normalizedUrl,
-    salaryMin: indeedDetails.salaryMin || remoteDetails.salaryMin || "",
-    salaryMax: indeedDetails.salaryMax || remoteDetails.salaryMax || "",
-    employmentType: indeedDetails.employmentType || remoteDetails.employmentType || "",
-    location: indeedDetails.location || remoteDetails.location || "",
+    salaryMin: indeedDetails.salaryMin || remoteDetails.salaryMin || genericDetails.salaryMin || "",
+    salaryMax: indeedDetails.salaryMax || remoteDetails.salaryMax || genericDetails.salaryMax || "",
+    employmentType:
+      indeedDetails.employmentType ||
+      remoteDetails.employmentType ||
+      genericDetails.employmentType ||
+      "",
+    location: indeedDetails.location || remoteDetails.location || genericDetails.location || "",
     source: source,
     status: status,
     lastReply: "",
@@ -215,6 +220,48 @@
     return details;
   }
 
+  function extractGenericDetails_() {
+    const details = {};
+
+    const salaryText = findFirstLabelValue_([
+      "Salary",
+      "Compensation",
+      "Pay",
+      "Pay Range",
+      "Salary Range"
+    ]);
+    if (salaryText) {
+      const salary = normalizeSalaryRange_(salaryText);
+      details.salaryMin = salary.min || "";
+      details.salaryMax = salary.max || "";
+    }
+
+    const employmentText = findFirstLabelValue_([
+      "Employment Type",
+      "Job Schedule",
+      "Schedule",
+      "Job Type",
+      "Type"
+    ]);
+    details.employmentType = deriveEmploymentType_(employmentText);
+
+    const locationText = findFirstLabelValue_([
+      "Location",
+      "Work Location",
+      "Workplace Type",
+      "Remote Work Level"
+    ]);
+    const remoteText = findFirstLabelValue_([
+      "Remote Work Level",
+      "Workplace Type",
+      "Remote",
+      "Work Location"
+    ]);
+    details.location = deriveLocation_(locationText, remoteText);
+
+    return details;
+  }
+
   function extractIndeedDetails_() {
     const details = {};
     const job = getIndeedJobPosting_();
@@ -326,6 +373,14 @@
     const parentText = labelNode.parentElement?.textContent || "";
     const cleaned = parentText.replace(label, "").trim();
     return cleaned || "";
+  }
+
+  function findFirstLabelValue_(labels) {
+    for (const label of labels) {
+      const value = findLabelValue_(label);
+      if (value) return value;
+    }
+    return "";
   }
 
   function parseSalaryRange_(text) {

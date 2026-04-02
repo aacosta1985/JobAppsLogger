@@ -91,19 +91,24 @@ Deploy it as a Web App and use the `/exec` deployment URL in `chrome-extension/c
 - `remote.co`
   - title from first `h1`
   - company from first `h2`
-  - salary parsing from the salary block
-  - employment type parsing from job schedule
-  - location inference from remote/location fields
+  - site-specific title and company extraction
+  - also benefits from the generic salary, employment type, and location parsing layer
 
 - `Indeed`
   - prefers JSON-LD `JobPosting`
   - extracts title, company, location, employment type, salary
-  - converts hourly pay to annualized pay using `2080` hours when needed
+  - also benefits from the generic salary, employment type, and location parsing layer
 
 - `LinkedIn`
   - source detection is supported
   - title/company are inferred from page title and visible top-card content
   - salary is often unavailable on public LinkedIn pages
+
+### Universal parsing behaviors
+
+- employment type inference from common labels such as `Employment Type`, `Job Schedule`, `Schedule`, and `Job Type`
+- location inference from common `Location`, `Work Location`, `Workplace Type`, and remote-related fields
+- hourly pay conversion to annualized pay using `2080` hours when salary text or structured data indicates an hourly rate
 
 ### Source normalization only
 
